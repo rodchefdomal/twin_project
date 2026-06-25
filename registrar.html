@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Manutenção</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>📝 Nova Manutenção</h1>
+        <p>Preencha os dados abaixo para salvar no histórico</p>
+    </header>
+
+    <main style="max-width: 400px; margin: 0 auto;">
+        <div class="card">
+            <form action="https://formspree.io/f/xvzjkyyo" method="POST"></form>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nome do Colaborador:</label>
+                    <input type="text" name="Nome" placeholder="Digite seu nome completo" required 
+                           style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #2a2a2a; color: white; box-sizing: border-box;">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">RA (Matrícula):</label>
+                    <input type="text" name="RA" placeholder="Ex: 12345" required 
+                           pattern="\d{5}" maxlength="5" title="O RA deve conter exatamente 5 números"
+                           style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #2a2a2a; color: white; box-sizing: border-box;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Data da Manutenção:</label>
+                    <input type="date" name="Data" required 
+                           style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #2a2a2a; color: white; box-sizing: border-box;">
+                </div>
+
+                <button type="submit" class="btn-registrar" style="width: 100%; border: none; cursor: pointer; font-size: 16px;">
+                    💾 Salvar Registro
+                </button>
+
+            </form>
+        </div>
+
+        <br>
+        <div style="text-align: center;">
+            <a href="historico.html" style="color: #007bff; text-decoration: none; font-weight: bold;">⬅️ Cancelar e Voltar</a>
+        </div>
+    </main>
+
+</body>
+</html>

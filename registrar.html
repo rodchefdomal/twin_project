@@ -2,51 +2,40 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Manutenção</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .btn-registrar { background-color: #007bff; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px; width: 100%; }
+        .btn-registrar:hover { background-color: #0056b3; }
+    </style>
 </head>
 <body>
 
-    <header>
-        <h1>📝 Nova Manutenção</h1>
-        <p>Preencha os dados abaixo para salvar no histórico</p>
-    </header>
+<main style="max-width: 400px; margin: 0 auto;">
+    <div class="card">
+        <form action="https://formspree.io/f/xvzjkyyo" method="POST">
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nome do Colaborador:</label>
+                <input type="text" name="Nome" placeholder="Digite seu nome completo" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            </div>
 
-    <main style="max-width: 400px; margin: 0 auto;">
-        <div class="card">
-            <form action="https://formspree.io/f/xvzjkyyo" method="POST"></form>
-                
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nome do Colaborador:</label>
-                    <input type="text" name="Nome" placeholder="Digite seu nome completo" required 
-                           style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #2a2a2a; color: white; box-sizing: border-box;">
-                </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">RA (Matrícula):</label>
+                <input type="text" name="RA" placeholder="Ex: 12345" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            </div>
 
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">RA (Matrícula):</label>
-                    <input type="text" name="RA" placeholder="Ex: 12345" required 
-                           pattern="\d{5}" maxlength="5" title="O RA deve conter exatamente 5 números"
-                           style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #2a2a2a; color: white; box-sizing: border-box;">
-                </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Data da Manutenção:</label>
+                <input type="date" name="Data" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            </div>
 
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Data da Manutenção:</label>
-                    <input type="date" name="Data" required 
-                           style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #2a2a2a; color: white; box-sizing: border-box;">
-                </div>
-
-                <button type="submit" class="btn-registrar" style="width: 100%; border: none; cursor: pointer; font-size: 16px;">
-                    💾 Salvar Registro
-                </button>
-
-            </form>
-        </div>
-
-        <br>
-        <div style="text-align: center;">
-            <a href="historico.html" style="color: #007bff; text-decoration: none; font-weight: bold;">⬅️ Cancelar e Voltar</a>
-        </div>
-    </main>
+            <button type="submit" class="btn-registrar">Salvar Registro</button>
+        </form>
+    </div>
+</main>
 
 </body>
 </html>

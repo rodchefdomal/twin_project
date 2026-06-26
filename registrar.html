@@ -6,36 +6,57 @@
     <title>Registrar Manutenção</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .btn-registrar { background-color: #007bff; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px; width: 100%; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; }
+        .btn-registrar { background-color: #007bff; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px; width: 100%; margin-top: 10px; }
         .btn-registrar:hover { background-color: #0056b3; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<main style="max-width: 400px; margin: 0 auto;">
-    <div class="card">
-        <form action="https://formspree.io/f/xvzjkyyo" method="POST" target="_blank"></form>
-            
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nome do Colaborador:</label>
-                <input type="text" name="Nome" placeholder="Digite seu nome completo" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-            </div>
+<div class="card">
+    <form id="meuFormulario" action="https://formspree.io/f/xvzjkyyo" method="POST">
+        
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: bold;">Nome do Colaborador:</label>
+            <input type="text" name="Nome" placeholder="Digite seu nome completo" required>
+        </div>
 
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">RA (Matrícula):</label>
-                <input type="text" name="RA" placeholder="Ex: 12345" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-            </div>
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: bold;">RA (Matrícula):</label>
+            <input type="text" name="RA" placeholder="Ex: 12345" required>
+        </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Data da Manutenção:</label>
-                <input type="date" name="Data" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-            </div>
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold;">Data da Manutenção:</label>
+            <input type="date" name="Data" required>
+        </div>
 
-            <button type="submit" class="btn-registrar">Salvar Registro</button>
-        </form>
-    </div>
-</main>
+        <button type="submit" class="btn-registrar">Salvar Registro</button>
+    </form>
+</div>
+
+<script>
+    const form = document.getElementById("meuFormulario");
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            });
+            if (response.ok) {
+                alert("Enviado com sucesso!");
+                form.reset();
+            } else {
+                alert("Ocorreu um erro ao enviar.");
+            }
+        } catch (error) {
+            alert("Erro de conexão.");
+        }
+    });
+</script>
 
 </body>
 </html>

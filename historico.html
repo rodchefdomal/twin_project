@@ -2,22 +2,226 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Histórico de Manutenção</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #1e1e1e; 
+            color: #ffffff; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 500px; 
+            margin: 0 auto; 
+        }
+        h1 { 
+            text-align: center; 
+            font-size: 26px; 
+            margin-bottom: 25px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px;
+        }
+        /* Botão verde de registro */
+        .btn-nova-manutencao { 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: #28a745; 
+            color: white; 
+            text-decoration: none; 
+            padding: 12px 20px; 
+            font-weight: bold; 
+            border-radius: 5px; 
+            margin: 0 auto 25px auto;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn-nova-manutencao:hover { 
+            background-color: #218838; 
+        }
+        /* Lista de Históricos */
+        .historico-box { 
+            background: #2d2d2d; 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+            margin-bottom: 25px;
+            min-height: 100px;
+        }
+        .historico-item { 
+            padding: 12px; 
+            border-bottom: 1px solid #444; 
+            font-size: 15px;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .historico-item:last-child { 
+            border-bottom: none; 
+        }
+        .historico-item strong {
+            color: #28a745;
+        }
+        .tag-ra {
+            background-color: #333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #aaa;
+            border: 1px solid #444;
+        }
+        /* Botão Voltar */
+        .btn-voltar { 
+            color: #007bff; 
+            text-decoration: none; 
+            font-weight: bold; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 5px; 
+            justify-content: center;
+            width: 100%;
+        }
+        .btn-voltar:hover { 
+            text-decoration: underline; 
+        }
+        /* Mensagens de Estado */
+        .status-msg {
+            text-align: center;
+            color: #aaa;
+            font-style: italic;
+            padding: 20px;
+        }
+        .error-msg {
+            color: #ff4a4a;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>🛠️ Histórico de Manutenção</h1>
-        <a href="registrar.html" class="btn-registrar">➕ Registrar Nova Manutenção</a>
-    </header>
 
-    <main>
-        <div class="card">
-            <p><strong>22/05/2026</strong> - Preventiva - Carlos E.</p>
-            <p><strong>10/04/2026</strong> - Corretiva - Marcos Lima</p>
-        </div>
-        <br>
-        <a href="index.html" style="color: #007bff; text-decoration: none; font-weight: bold;">⬅️ Voltar ao Molde</a>
-    </main>
+<div class="container">
+    <h1>🛠️ Histórico de Manutenção</h1>
+    
+    <a href="registrar.html" class="btn-nova-manutencao">➕ Registrar Nova Manutenção</a>
+
+    <!-- Onde as manutenções da planilha vão aparecer de verdade -->
+    <div class="historico-box" id="historico-lista">
+        <div class="status-msg">Buscando dados na planilha do Google...</div>
+    </div>
+
+    <a href="index.html" class="btn-voltar">⬅️ Voltar ao Molde</a>
+</div>
+
+<script>
+    // ==========================================================
+    // CONFIGURAÇÃO: COLOQUE O ID DA SUA PLANILHA AQUI DENTRO!
+    // ==========================================================
+    const SPREADSHEET_ID = 'COLOQUE_SEU_ID_AQUI'; 
+
+    // URL para puxar os dados formatados em JSON
+    const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+
+    async function carregarHistorico() {
+        const container = document.getElementById('historico-lista');
+
+        if (SPREADSHEET_ID === 'COLOQUE_SEU_ID_AQUI') {
+            container.innerHTML = `
+                <div class="error-msg">
+                    <strong>Configuração pendente!</strong><br><br>
+                    Abra o seu arquivo <code>historico.html</code> no VS Code e troque o texto <code>COLOQUE_SEU_ID_AQUI</code> pelo ID real da sua Planilha do Google.
+                </div>`;
+            return;
+        }
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Não foi possível acessar a planilha.");
+            
+            const text = await response.text();
+            
+            // Retira a casca de proteção que o Google coloca no JSON
+            const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+            const data = JSON.parse(jsonString);
+            
+            const rows = data.table.rows;
+
+            if (!rows || rows.length === 0) {
+                container.innerHTML = '<div class="status-msg">Nenhum registro encontrado na planilha.</div>';
+                return;
+            }
+
+            container.innerHTML = ''; // Limpa a mensagem de carregando
+
+            // Identifica se a primeira linha é de cabeçalho ("Nome", "RA", "Data") para ignorá-la
+            let inicioDoLoop = 0;
+            const primeiraCelua = rows[0].c[0] ? String(rows[0].c[0].v).toLowerCase().trim() : '';
+            if (primeiraCelua === 'nome' || primeiraCelua === 'nome do colaborador') {
+                inicioDoLoop = 1; 
+            }
+
+            // Inverte a ordem para as manutenções mais novas aparecerem no topo do site
+            const registrosParaMostrar = rows.slice(inicioDoLoop).reverse();
+
+            if (registrosParaMostrar.length === 0) {
+                container.innerHTML = '<div class="status-msg">Nenhum registro de manutenção cadastrado ainda.</div>';
+                return;
+            }
+
+            registrosParaMostrar.forEach(row => {
+                // Mapeamento das colunas (A: Nome, B: RA, C: Data)
+                const nome = row.c[0] ? row.c[0].v : 'Sem Nome';
+                const ra = row.c[1] ? row.c[1].v : 'S/RA';
+                let dataCrua = row.c[2] ? row.c[2].v : 'Sem Data';
+
+                // Formatação simples de data para o padrão brasileiro (DD/MM/AAAA)
+                let dataFormatada = dataCrua;
+                if (dataCrua.toString().startsWith('Date')) {
+                    const extrairNumeros = dataCrua.match(/\d+/g);
+                    if (extrairNumeros && extrairNumeros.length >= 3) {
+                        const ano = extrairNumeros[0];
+                        const mes = String(Number(extrairNumeros[1]) + 1).padStart(2, '0');
+                        const dia = String(extrairNumeros[2]).padStart(2, '0');
+                        dataFormatada = `${dia}/${mes}/${ano}`;
+                    }
+                }
+
+                // Cria o item visualmente na tela
+                const divItem = document.createElement('div');
+                divItem.className = 'historico-item';
+                divItem.innerHTML = `
+                    <div>
+                        <strong>${dataFormatada}</strong> — ${nome}
+                    </div>
+                    <span class="tag-ra">RA: ${ra}</span>
+                `;
+                container.appendChild(divItem);
+            });
+
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = `
+                <div class="error-msg">
+                    <strong>Erro ao carregar o histórico!</strong><br><br>
+                    Garanta que sua Planilha do Google está compartilhada como <strong>"Qualquer pessoa com o link"</strong> em modo <strong>Leitor</strong>.
+                </div>`;
+        }
+    }
+
+    // Executa a função assim que a página abre
+    window.onload = carregarHistorico;
+</script>
+
 </body>
 </html>

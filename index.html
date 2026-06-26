@@ -10,7 +10,8 @@
     <style>
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #121212; 
+            /* Fundo escuro com um levíssimo tom esverdeado para não ser um preto "morto" */
+            background-color: #0d1410; 
             color: #ffffff; 
             margin: 0;
             padding: 0;
@@ -19,14 +20,14 @@
             align-items: center;
         }
 
-        /* Cabeçalho topo de linha */
+        /* Cabeçalho topo de linha - Verde Faber-Castell */
         header {
             width: 100%;
-            background-color: #1e1e1e;
+            background-color: #006341; /* Verde oficial */
             padding: 20px 0;
             text-align: center;
-            border-bottom: 2px solid #007bff;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+            border-bottom: 2px solid #ffffff; /* Era azul, agora é branco */
+            box-shadow: 0 4px 15px rgba(0, 99, 65, 0.5);
             margin-bottom: 30px;
         }
         
@@ -34,42 +35,45 @@
             margin: 0;
             font-size: 28px;
             letter-spacing: 2px;
+            color: #ffffff;
         }
 
+        /* Era azul, agora é branco pra dar o contraste no fundo verde */
         header span {
-            color: #007bff;
+            color: #ffffff; 
+            font-weight: 300;
         }
 
         .dashboard {
             display: flex;
-            flex-direction: column; /* Deixa o 3D em cima e o painel embaixo */
+            flex-direction: column; 
             gap: 20px;
             max-width: 1200px;
             width: 90%;
             align-items: center;
         }
 
-        /* O palco onde o 3D vai brilhar - Agora mais largo! */
+        /* O palco onde o 3D vai brilhar */
         .viewer-container {
-            background: radial-gradient(circle, #2a2a2a 0%, #1a1a1a 100%);
-            border: 1px solid #333;
+            /* Degradê super elegante puxando pro verde escuro */
+            background: radial-gradient(circle, #1a2a21 0%, #0d1410 100%);
+            border: 1px solid #1f3328;
             border-radius: 12px;
             padding: 15px;
             width: 100%;
-            height: 500px; /* Altura maior pra destacar a peça */
+            height: 500px; 
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
             position: relative;
             box-sizing: border-box;
         }
 
-        /* Tag provisória até o 3D chegar */
         .viewer-container::before {
             content: 'Área do Modelo 3D';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #555;
+            color: #4a6355; /* Cor da letra provisória adaptada pro tema */
             font-weight: bold;
             font-size: 20px;
             pointer-events: none;
@@ -83,28 +87,29 @@
             outline: none;
         }
 
-        /* Painel Inferior de Controle Esticado */
+        /* Painel Inferior de Controle */
         .control-panel {
-            background-color: #1e1e1e;
+            background-color: #121e17; /* Verde bem escuro corporativo */
             padding: 20px;
             border-radius: 12px;
             width: 100%;
             display: flex;
-            flex-direction: row; /* Deita os itens lado a lado */
+            flex-direction: row; 
             justify-content: space-between;
             align-items: stretch;
             gap: 20px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             box-sizing: border-box;
+            border: 1px solid #1f3328;
         }
 
         .status-card {
-            flex: 1; /* Faz ocupar espaço igual aos botões */
-            background-color: #2d2d2d;
+            flex: 1; 
+            background-color: #182b20; /* Destaque sutil */
             padding: 15px;
             border-radius: 8px;
             text-align: center;
-            border-left: 5px solid #28a745;
+            border-left: 5px solid #28a745; /* Mantive o verde "Operacional" universal */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -113,7 +118,7 @@
         .status-card h3 {
             margin: 0 0 5px 0;
             font-size: 14px;
-            color: #aaa;
+            color: #9cb3a5;
         }
 
         .status-card p {
@@ -125,7 +130,7 @@
 
         /* Botões do Menu */
         .btn {
-            flex: 1; /* Faz ocupar espaço igual ao status */
+            flex: 1; 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -133,32 +138,35 @@
             border-radius: 8px;
             font-weight: bold;
             text-decoration: none;
-            color: white;
             transition: all 0.3s ease;
             font-size: 16px;
         }
 
+        /* Era azul, agora é Branco com texto Verde Faber */
         .btn-registro {
-            background-color: #007bff;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            background-color: #ffffff;
+            color: #006341;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
         }
 
         .btn-registro:hover {
-            background-color: #0056b3;
+            background-color: #e6e6e6;
             transform: translateY(-2px);
         }
 
+        /* Botão secundário ajustado pro tema */
         .btn-historico {
-            background-color: #6c757d;
-            box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+            background-color: #2a4033;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid #3b5947;
         }
 
         .btn-historico:hover {
-            background-color: #5a6268;
+            background-color: #3b5947;
             transform: translateY(-2px);
         }
 
-        /* Inteligência para celular: se a tela for pequena, empilha de novo */
         @media (max-width: 768px) {
             .control-panel {
                 flex-direction: column;
@@ -194,7 +202,6 @@
             </div>
 
             <a href="registrar.html" class="btn btn-registro">➕ Registrar Manutenção</a>
-            
             <a href="historico.html" class="btn btn-historico">📋 Histórico Completo</a>
 
         </div>

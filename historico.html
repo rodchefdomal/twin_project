@@ -32,37 +32,47 @@
     <a href="index.html" class="btn-voltar">⬅️ Voltar ao Molde</a>
 </div>
 <script>
+    // ID DA SUA PLANILHA JÁ CONFIGURADO AQUI:
     const SPREADSHEET_ID = '1ONDGleeC0pJW5_fTLpswa3FtpadrvcyE7v3rN-CXcpI'; 
     const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
     async function carregarHistorico() {
         const container = document.getElementById('historico-lista');
-        if (SPREADSHEET_ID === '1ONDGleeC0pJW5_fTLpswa3FtpadrvcyE7v3rN-CXcpI') {
+        
+        if (SPREADSHEET_ID === 'COLOQUE_O_SEU_ID_AQUI_DE_NOVO') {
             container.innerHTML = `<div class="error-msg">Coloque o ID da Planilha no código!</div>`;
             return;
         }
+        
         try {
             const response = await fetch(url);
             const text = await response.text();
+            
+            // Retira a proteção do JSON
             const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
             const data = JSON.parse(jsonString);
             const rows = data.table.rows;
             container.innerHTML = ''; 
             
+            // Ignora o cabeçalho
             let inicio = 0;
             const primeira = rows[0].c[0] ? String(rows[0].c[0].v).toLowerCase().trim() : '';
             if (primeira === 'nome') inicio = 1; 
 
+            // Inverte para os mais novos aparecerem primeiro
             const registros = rows.slice(inicio).reverse();
+            
             if (registros.length === 0) {
                 container.innerHTML = '<div class="status-msg">Nenhum registro.</div>';
                 return;
             }
 
+            // Cria a lista na tela
             registros.forEach(row => {
                 const nome = row.c[0] ? row.c[0].v : 'Sem Nome';
                 const ra = row.c[1] ? row.c[1].v : 'S/RA';
                 let dataCrua = row.c[2] ? row.c[2].v : 'Sem Data';
+                
                 let dataFormatada = dataCrua;
                 if (dataCrua.toString().startsWith('Date')) {
                     const num = dataCrua.match(/\d+/g);
@@ -70,13 +80,15 @@
                         dataFormatada = `${String(num[2]).padStart(2, '0')}/${String(Number(num[1]) + 1).padStart(2, '0')}/${num[0]}`;
                     }
                 }
+                
                 const div = document.createElement('div');
                 div.className = 'historico-item';
                 div.innerHTML = `<div><strong>${dataFormatada}</strong> — ${nome}</div><span class="tag-ra">RA: ${ra}</span>`;
                 container.appendChild(div);
             });
         } catch (error) {
-            container.innerHTML = `<div class="error-msg">Erro ao carregar os dados.</div>`;
+            console.error(error);
+            container.innerHTML = `<div class="error-msg">Erro ao carregar os dados. Verifique se a planilha está pública.</div>`;
         }
     }
     window.onload = carregarHistorico;

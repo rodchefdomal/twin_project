@@ -4,222 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Central de Monitoramento - Molde Injetor</title>
-    
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
-
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            /* Fundo escuro com um levíssimo tom esverdeado */
-            background-color: #0d1410; 
-            color: #ffffff; 
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Cabeçalho topo de linha - Verde Faber-Castell */
-        header {
-            width: 100%;
-            background-color: #006341; 
-            padding: 20px 0;
-            text-align: center;
-            border-bottom: 2px solid #ffffff; 
-            box-shadow: 0 4px 15px rgba(0, 99, 65, 0.5);
-            margin-bottom: 30px;
-        }
-        
-        header h1 {
-            margin: 0;
-            font-size: 28px;
-            letter-spacing: 1px;
-            color: #ffffff;
-        }
-
-        header span {
-            color: #ffffff; 
-            font-weight: 300;
-        }
-
-        .dashboard {
-            display: flex;
-            flex-direction: column; 
-            gap: 20px;
-            max-width: 1200px;
-            width: 95%; /* Um pouco mais largo para caber os 4 itens perfeitamente */
-            align-items: center;
-        }
-
-        /* O palco onde o 3D vai brilhar */
-        .viewer-container {
-            background: radial-gradient(circle, #1a2a21 0%, #0d1410 100%);
-            border: 1px solid #1f3328;
-            border-radius: 12px;
-            padding: 15px;
-            width: 100%;
-            height: 500px; 
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
-            position: relative;
-            box-sizing: border-box;
-        }
-
-        .viewer-container::before {
-            content: 'Área do Modelo 3D';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #4a6355; 
-            font-weight: bold;
-            font-size: 20px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        model-viewer {
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            outline: none;
-        }
-
-        /* Painel Inferior de Controle */
-        .control-panel {
-            background-color: #121e17; 
-            padding: 20px;
-            border-radius: 12px;
-            width: 100%;
-            display: flex;
-            flex-direction: row; 
-            justify-content: space-between;
-            align-items: stretch;
-            gap: 15px; /* Gap um pouco menor para acomodar mais um botão */
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            box-sizing: border-box;
-            border: 1px solid #1f3328;
-        }
-
-        .status-card {
-            flex: 1; 
-            background-color: #182b20; 
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 5px solid #28a745; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .status-card h3 {
-            margin: 0 0 5px 0;
-            font-size: 13px; /* Fonte levemente menor para caber bonito */
-            color: #9cb3a5;
-        }
-
-        .status-card p {
-            margin: 0;
-            font-size: 20px;
-            font-weight: bold;
-            color: #28a745;
-        }
-
-        /* Botões do Menu */
-        .btn {
-            flex: 1; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 15px; /* Ajuste para caber em telas menores */
-            text-align: center;
-        }
-
-        /* Novo botão de Especificações - Verde mais claro que o fundo */
-        .btn-especificacoes {
-            background-color: #008f5d;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0, 143, 93, 0.2);
-        }
-
-        .btn-especificacoes:hover {
-            background-color: #00b374;
-            transform: translateY(-2px);
-        }
-
-        /* Botão de Registro - Branco Faber */
-        .btn-registro {
-            background-color: #ffffff;
-            color: #006341;
-            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-registro:hover {
-            background-color: #e6e6e6;
-            transform: translateY(-2px);
-        }
-
-        /* Botão de Histórico - Cinza esverdeado */
-        .btn-historico {
-            background-color: #2a4033;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            border: 1px solid #3b5947;
-        }
-
-        .btn-historico:hover {
-            background-color: #3b5947;
-            transform: translateY(-2px);
-        }
-
-        /* Responsividade para celular: empilha os 4 botões */
-        @media (max-width: 900px) {
-            .control-panel {
-                flex-direction: column;
-            }
-            .viewer-container {
-                height: 350px;
-            }
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1410; color: #ffffff; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
+        header { width: 100%; background-color: #006341; padding: 20px 0; text-align: center; border-bottom: 2px solid #ffffff; box-shadow: 0 4px 15px rgba(0, 99, 65, 0.5); margin-bottom: 30px; }
+        header h1 { margin: 0; font-size: 28px; letter-spacing: 1px; color: #ffffff; }
+        header span { color: #ffffff; font-weight: 300; }
+        .dashboard { display: flex; flex-direction: column; gap: 20px; max-width: 1200px; width: 95%; align-items: center; }
+        .viewer-container { background: radial-gradient(circle, #1a2a21 0%, #0d1410 100%); border: 1px solid #1f3328; border-radius: 12px; padding: 15px; width: 100%; height: 500px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5); position: relative; box-sizing: border-box; }
+        .viewer-container::before { content: 'Área do Modelo 3D'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #4a6355; font-weight: bold; font-size: 20px; pointer-events: none; z-index: 0; }
+        model-viewer { width: 100%; height: 100%; z-index: 1; outline: none; }
+        .control-panel { background-color: #121e17; padding: 20px; border-radius: 12px; width: 100%; display: flex; flex-direction: row; justify-content: space-between; align-items: stretch; gap: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); box-sizing: border-box; border: 1px solid #1f3328; }
+        .status-card { flex: 1.2; background-color: #182b20; padding: 15px; border-radius: 8px; text-align: center; border-left: 5px solid #28a745; display: flex; flex-direction: column; justify-content: center; }
+        .status-card h3 { margin: 0 0 5px 0; font-size: 14px; color: #9cb3a5; }
+        .status-card p { margin: 0; font-size: 22px; font-weight: bold; color: #28a745; }
+        .btn { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: all 0.3s ease; font-size: 16px; text-align: center; }
+        .btn-especificacoes { background-color: #ffffff; color: #006341; box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1); }
+        .btn-especificacoes:hover { background-color: #e6e6e6; transform: translateY(-2px); }
+        .btn-historico { background-color: #006341; color: white; box-shadow: 0 4px 10px rgba(0, 99, 65, 0.3); border: 1px solid #008f5d; }
+        .btn-historico:hover { background-color: #008f5d; transform: translateY(-2px); }
+        @media (max-width: 900px) { .control-panel { flex-direction: column; } .viewer-container { height: 350px; } }
     </style>
 </head>
 <body>
-
     <header>
         <h1>Central de Monitoramento — <span>Molde Injetor</span></h1>
     </header>
-
     <div class="dashboard">
-        
         <div class="viewer-container">
-            <model-viewer 
-                alt="Modelo 3D do Molde" 
-                auto-rotate 
-                camera-controls 
-                shadow-intensity="1">
-            </model-viewer>
+            <model-viewer alt="Modelo 3D do Molde" auto-rotate camera-controls shadow-intensity="1"></model-viewer>
         </div>
-
         <div class="control-panel">
-            
             <div class="status-card">
                 <h3>Status Atual do Molde</h3>
                 <p>⚙️ Operacional</p>
             </div>
-
             <a href="especificacoes.html" class="btn btn-especificacoes">📄 Especificações</a>
-            <a href="registrar.html" class="btn btn-registro">➕ Nova Manutenção</a>
-            <a href="historico.html" class="btn btn-historico">📋 Histórico</a>
-
+            <a href="historico.html" class="btn btn-historico">📋 Histórico de Manutenção</a>
         </div>
-
     </div>
-
 </body>
 </html>

@@ -2,23 +2,27 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Especificações Técnicas</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1410; color: #ffffff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { margin-top: 20px; margin-bottom: 30px; font-size: 26px; display: flex; align-items: center; gap: 10px; }
+        .container { max-width: 700px; width: 100%; background: #121e17; padding: 30px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); border: 1px solid #1f3328; box-sizing: border-box; }
+        .spec-item { margin-bottom: 15px; font-size: 16px; padding-bottom: 15px; border-bottom: 1px solid #1f3328; }
+        .spec-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .spec-item strong { color: #9cb3a5; }
+        .btn-voltar { display: block; margin-top: 30px; color: #008f5d; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-voltar:hover { text-decoration: underline; color: #00b374; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>📋 Especificações Técnicas</h1>
-    </header>
-
-    <main>
-        <div class="card">
-            <p><strong>Material:</strong> Polipropileno (PP)</p>
-            <p><strong>Cavidades:</strong> 24</p>
-            <p><strong>Status atual:</strong> Em Produção</p>
-            <p><strong>Setor da Fábrica:</strong> Setor B</p>
-        </div>
-        <br>
-        <a href="index.html" style="color: #007bff; text-decoration: none; font-weight: bold;">⬅️ Voltar ao Molde</a>
-    </main>
+    <h1>📋 Especificações Técnicas</h1>
+    <div class="container">
+        <div class="spec-item"><strong>Material:</strong> Polipropileno (PP)</div>
+        <div class="spec-item"><strong>Cavidades:</strong> 24</div>
+        <div class="spec-item"><strong>Status atual:</strong> Em Produção</div>
+        <div class="spec-item"><strong>Setor da Fábrica:</strong> Setor B</div>
+    </div>
+    <a href="index.html" class="btn-voltar">⬅️ Voltar ao Molde</a>
 </body>
 </html>

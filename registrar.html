@@ -5,142 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Manutenção</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            background-color: #1e1e1e; 
-            color: #ffffff; 
-            padding: 20px; 
-            margin: 0;
-        }
-        .container { 
-            max-width: 500px; 
-            margin: 0 auto; 
-            background: #2d2d2d; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-        }
-        h1 { 
-            text-align: center; 
-            font-size: 26px; 
-            margin-bottom: 25px; 
-        }
-        .form-group { 
-            margin-bottom: 15px; 
-        }
-        label { 
-            display: block; 
-            margin-bottom: 5px; 
-            font-weight: bold; 
-            color: #aaa;
-        }
-        input[type="text"], input[type="date"], input[type="number"] { 
-            width: 100%; 
-            padding: 12px; 
-            border-radius: 5px; 
-            border: 1px solid #444; 
-            background-color: #333; 
-            color: white; 
-            box-sizing: border-box; 
-            font-size: 15px;
-        }
-        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus {
-            outline: none;
-            border-color: #28a745;
-        }
-        .btn-salvar { 
-            width: 100%; 
-            padding: 14px; 
-            background-color: #28a745; 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: background 0.2s; 
-            margin-top: 15px; 
-        }
-        .btn-salvar:hover { 
-            background-color: #218838; 
-        }
-        .btn-salvar:disabled {
-            background-color: #555;
-            cursor: not-allowed;
-        }
-        .btn-voltar { 
-            display: block; 
-            text-align: center; 
-            margin-top: 25px; 
-            color: #007bff; 
-            text-decoration: none; 
-            font-weight: bold;
-        }
-        .btn-voltar:hover { 
-            text-decoration: underline; 
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1410; color: #ffffff; padding: 20px; margin: 0; }
+        .container { max-width: 500px; margin: 0 auto; background: #121e17; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #1f3328; }
+        h1 { text-align: center; font-size: 26px; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #9cb3a5; }
+        input[type="text"], input[type="date"], input[type="number"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #1f3328; background-color: #182b20; color: white; box-sizing: border-box; font-size: 15px; }
+        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus { outline: none; border-color: #008f5d; }
+        .btn-salvar { width: 100%; padding: 14px; background-color: #006341; color: white; border: 1px solid #008f5d; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-salvar:hover { background-color: #008f5d; }
+        .btn-salvar:disabled { background-color: #2a4033; cursor: not-allowed; border-color: #1f3328; }
+        .btn-voltar { display: block; text-align: center; margin-top: 25px; color: #008f5d; text-decoration: none; font-weight: bold; }
+        .btn-voltar:hover { text-decoration: underline; color: #00b374; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <h1>📝 Registrar Manutenção</h1>
-    
-    <!-- Formulário com o seu link do Google Apps Script -->
     <form id="formManutencao" action="https://script.google.com/macros/s/AKfycbwsM5jmyNMFfLcr8mdnjl7buHGpk1SO4AaSJvf6Hd96uyksUDfdgT0xGGFlqL75IKur/exec" method="POST">
-        
         <div class="form-group">
             <label for="nome">Nome do Colaborador:</label>
             <input type="text" id="nome" name="Nome" required placeholder="Digite o nome completo">
         </div>
-
         <div class="form-group">
             <label for="ra">RA (Registro Acadêmico):</label>
             <input type="number" id="ra" name="RA" required placeholder="Ex: 12345">
         </div>
-
         <div class="form-group">
             <label for="data">Data da Manutenção:</label>
             <input type="date" id="data" name="Data" required>
         </div>
-
         <button type="submit" id="btnSubmit" class="btn-salvar">💾 Salvar Registro</button>
     </form>
-    
     <a href="historico.html" class="btn-voltar">📋 Ver Histórico Completo</a>
 </div>
-
 <script>
-    // Esse script faz o envio por debaixo dos panos e te joga pro histórico sem recarregar telas feias
     document.getElementById('formManutencao').addEventListener('submit', function(e) {
-        e.preventDefault(); // Segura o form para não abrir a página do Google
-        
+        e.preventDefault(); 
         const form = e.target;
         const btn = document.getElementById('btnSubmit');
-        
-        // Muda o botão para mostrar que está pensando
-        btn.innerText = 'Enviando para a planilha... ⏳';
+        btn.innerText = 'Enviando... ⏳';
         btn.disabled = true;
-
         const data = new FormData(form);
-
-        fetch(form.action, {
-            method: 'POST',
-            body: data,
-            mode: 'no-cors' // Isso resolve bloqueios de segurança do navegador
-        })
-        .then(() => {
-            // Sucesso! Redireciona na hora pro histórico
-            window.location.href = 'historico.html';
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Ops! Deu um erro na conexão. Tente novamente.');
-            btn.innerText = '💾 Salvar Registro';
-            btn.disabled = false;
-        });
+        fetch(form.action, { method: 'POST', body: data, mode: 'no-cors' })
+        .then(() => { window.location.href = 'historico.html'; })
+        .catch(error => { alert('Erro na conexão!'); btn.innerText = '💾 Salvar Registro'; btn.disabled = false; });
     });
 </script>
-
 </body>
 </html>

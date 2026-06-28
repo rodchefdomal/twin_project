@@ -11,7 +11,6 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #9cb3a5; font-size: 14px; }
         
-        /* Ajuste para inputs, textareas e files */
         input[type="text"], input[type="date"], input[type="number"], textarea, input[type="file"] { 
             width: 100%; 
             padding: 12px; 
@@ -21,7 +20,7 @@
             color: white; 
             box-sizing: border-box; 
             font-size: 15px; 
-            font-family: inherit; /* Mantém a fonte no textarea */
+            font-family: inherit;
         }
         
         input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, textarea:focus { 
@@ -29,21 +28,12 @@
             border-color: #008f5d; 
         }
 
-        /* Estilo específico para o campo de arquivo para não ficar feio */
-        input[type="file"] {
-            padding: 9px; /* O file já tem um botão dentro, precisa de menos padding */
-            color: #9cb3a5;
-        }
-
-        /* Fazendo o campo de descrição ficar maior */
-        textarea {
-            resize: vertical; /* Deixa o cara puxar pra baixo se precisar escrever muito */
-            min-height: 100px;
-        }
+        input[type="file"] { padding: 9px; color: #9cb3a5; cursor: pointer; }
+        textarea { resize: vertical; min-height: 100px; }
 
         .btn-salvar { width: 100%; padding: 14px; background-color: #006341; color: white; border: 1px solid #008f5d; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-salvar:hover { background-color: #008f5d; }
-        .btn-salvar:disabled { background-color: #2a4033; cursor: not-allowed; border-color: #1f3328; }
+        .btn-salvar:disabled { background-color: #2a4033; cursor: not-allowed; border-color: #1f3328; color: #9cb3a5; }
         .btn-voltar { display: block; text-align: center; margin-top: 25px; color: #008f5d; text-decoration: none; font-weight: bold; }
         .btn-voltar:hover { text-decoration: underline; color: #00b374; }
     </style>
@@ -52,7 +42,7 @@
 <div class="container">
     <h1>📝 Registrar Manutenção</h1>
     
-    <form id="formManutencao" action="https://script.google.com/macros/s/AKfycbwsM5jmyNMFfLcr8mdnjl7buHGpk1SO4AaSJvf6Hd96uyksUDfdgT0xGGFlqL75IKur/exec" method="POST" enctype="multipart/form-data">
+    <form id="formManutencao" action="https://script.google.com/macros/s/AKfycbw5nJtFud7Rb8dbxFJctKNn2394wiE3pAEtZZdMYVtOdbDgC0olJtdo0yOArT7PtNsw/exec" method="POST">
         
         <div class="form-group">
             <label for="nome">Nome do Colaborador:</label>
@@ -71,12 +61,12 @@
 
         <div class="form-group">
             <label for="descricao">Descrição do Reparo (O que foi feito?):</label>
-            <textarea id="descricao" name="Descricao" required placeholder="Ex: Troca do pino extrator da cavidade 4 que estava desgastado..."></textarea>
+            <textarea id="descricao" name="Descricao" required placeholder="Ex: Troca dos pinos extratores danificados..."></textarea>
         </div>
 
         <div class="form-group">
             <label for="foto">Anexar Foto da Manutenção (Opcional):</label>
-            <input type="file" id="foto" name="Foto" accept="image/png, image/jpeg">
+            <input type="file" id="foto" accept="image/png, image/jpeg, image/jpg">
         </div>
 
         <button type="submit" id="btnSubmit" class="btn-salvar">💾 Salvar Registro</button>
@@ -90,15 +80,60 @@
         e.preventDefault(); 
         const form = e.target;
         const btn = document.getElementById('btnSubmit');
-        btn.innerText = 'Enviando... ⏳';
+        const fileInput = document.getElementById('foto');
+        
+        btn.innerText = 'Processando dados e imagem... ⏳';
         btn.disabled = true;
         
-        const data = new FormData(form);
-        
-        fetch(form.action, { method: 'POST', body: data, mode: 'no-cors' })
-        .then(() => { window.location.href = 'historico.html'; })
-        .catch(error => { alert('Erro na conexão!'); btn.innerText = '💾 Salvar Registro'; btn.disabled = false; });
+        const urlParams = new URLSearchParams();
+        urlParams.append('Nome', form.Nome.value);
+        urlParams.append('RA', form.RA.value);
+        urlParams.append('Data', form.Data.value);
+        urlParams.append('Descricao', form.Descricao.value);
+
+        // Verifica se tem foto anexada
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            
+            // TRAVA DE SEGURANÇA: Limite de 5MB para não travar o script
+            if (file.size > 5 * 1024 * 1024) {
+                alert('⚠️ A imagem é muito grande! Por favor, escolha uma foto menor que 5MB.');
+                btn.innerText = '💾 Salvar Registro';
+                btn.disabled = false;
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64String = event.target.result.split(',')[1]; // Pega só o código da imagem
+                urlParams.append('FotoData', base64String);
+                urlParams.append('FotoNome', file.name);
+                urlParams.append('FotoMime', file.type);
+                
+                enviarDados(form.action, urlParams, btn);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            // Se não tiver foto, envia só os dados de texto
+            enviarDados(form.action, urlParams, btn);
+        }
     });
+
+    function enviarDados(actionUrl, params, button) {
+        fetch(actionUrl, {
+            method: 'POST',
+            body: params.toString(),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(() => { 
+            window.location.href = 'historico.html'; 
+        })
+        .catch(error => { 
+            alert('Ops! Erro na conexão ao salvar. Tente novamente.'); 
+            button.innerText = '💾 Salvar Registro'; 
+            button.disabled = false; 
+        });
+    }
 </script>
 </body>
 </html>

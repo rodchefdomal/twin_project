@@ -27,7 +27,7 @@
         .btn-voltar { display: block; text-align: center; margin-top: 25px; color: #008f5d; text-decoration: none; font-weight: bold; }
         
         /* Estilos do Modal (Tela de Detalhes) */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         .modal-content { background: #121e17; border: 1px solid #1f3328; border-radius: 12px; padding: 25px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         .modal-content h2 { margin-top: 0; color: #28a745; font-size: 22px; border-bottom: 1px solid #1f3328; padding-bottom: 10px; }
         .modal-detalhe { margin-bottom: 15px; }
@@ -40,4 +40,139 @@
 </head>
 <body>
 
-    <h1>🛠️ Histórico de Manutenção
+    <h1>🛠️ Histórico de Manutenção</h1>
+    
+    <a href="registrar.html" class="btn-novo">➕ Registrar Nova Manutenção</a>
+    
+    <div class="historico-container" id="lista-historico">
+        <div class="loading">Buscando dados no sistema... ⏳</div>
+    </div>
+    
+    <a href="index.html" class="btn-voltar">⬅️ Voltar ao Molde</a>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <h2 id="modal-data">Data</h2>
+            
+            <div class="modal-detalhe">
+                <strong>Colaborador:</strong>
+                <p id="modal-nome">-</p>
+            </div>
+            
+            <div class="modal-detalhe">
+                <strong>RA:</strong>
+                <p id="modal-ra">-</p>
+            </div>
+            
+            <div class="modal-detalhe">
+                <strong>Descrição do Reparo:</strong>
+                <p id="modal-descricao">-</p>
+            </div>
+            
+            <div class="modal-detalhe" id="container-foto" style="display: none;">
+                <strong>Foto da Manutenção:</strong>
+                <img id="modal-foto" class="modal-foto" src="" alt="Carregando foto...">
+            </div>
+            
+            <button class="btn-fechar" onclick="fecharModal()">Fechar Detalhes</button>
+        </div>
+    </div>
+
+    <script>
+        // Sua URL atualizada
+        const urlScript = 'https://script.google.com/macros/s/AKfycbw3j-0doEtSWnzvHJmtnmj3fxnEAtmGCdoaikfs4IzO_uZ9N2VXWhLuqjojHNTltgi8/exec';
+
+        window.onload = function() {
+            fetch(urlScript)
+                .then(response => response.json())
+                .then(dados => renderizarHistorico(dados))
+                .catch(erro => {
+                    console.error("Erro: ", erro);
+                    document.getElementById('lista-historico').innerHTML = '<div class="loading" style="color: #ff4444;">Erro ao carregar o histórico. Tente atualizar a página.</div>';
+                });
+        };
+
+        // Função para arrumar a data feia
+        function formatarData(dataBruta) {
+            if (!dataBruta) return '-';
+            if (dataBruta.includes('T')) {
+                const partes = dataBruta.split('T')[0].split('-');
+                return `${partes[2]}/${partes[1]}/${partes[0]}`; // Retorna DD/MM/AAAA
+            }
+            return dataBruta;
+        }
+
+        // Função para transformar link do Drive em link direto de Imagem
+        function converterLinkFoto(url) {
+            if (!url) return '';
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                // Esse link mágico puxa a foto direto do servidor do Google sem carregar a página
+                return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800`;
+            }
+            return url;
+        }
+
+        function renderizarHistorico(dados) {
+            const container = document.getElementById('lista-historico');
+            container.innerHTML = ''; 
+
+            dados.reverse().forEach((linha) => {
+                const nome = linha[0];
+                const ra = linha[1];
+                const dataFeia = linha[2];
+                const descricao = linha[3];
+                const urlFoto = linha[4];
+
+                if(!nome || nome === "ERRO" || nome === "Nome") return; 
+
+                const dataBonita = formatarData(dataFeia);
+
+                const card = document.createElement('div');
+                card.className = 'registro-card';
+                card.onclick = () => abrirModal(nome, ra, dataBonita, descricao, urlFoto);
+                
+                card.innerHTML = `
+                    <div class="registro-info">
+                        <span class="registro-data">${dataBonita}</span>
+                        <span class="registro-nome">${nome}</span>
+                    </div>
+                    <span class="registro-ra">RA: ${ra}</span>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            if (container.innerHTML === '') {
+                container.innerHTML = '<div class="loading">Nenhum registro encontrado na planilha.</div>';
+            }
+        }
+
+        function abrirModal(nome, ra, data, descricao, urlFoto) {
+            document.getElementById('modal-data').innerText = 'Manutenção - ' + data;
+            document.getElementById('modal-nome').innerText = nome;
+            document.getElementById('modal-ra').innerText = ra;
+            document.getElementById('modal-descricao').innerText = descricao;
+            
+            const imgEl = document.getElementById('modal-foto');
+            const containerFoto = document.getElementById('container-foto');
+            
+            if (urlFoto && urlFoto.includes('drive.google.com')) {
+                imgEl.src = converterLinkFoto(urlFoto);
+                imgEl.style.display = 'block';
+                containerFoto.style.display = 'block';
+            } else {
+                imgEl.src = '';
+                imgEl.style.display = 'none';
+                containerFoto.style.display = 'none';
+            }
+            
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

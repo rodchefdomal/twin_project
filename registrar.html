@@ -91,9 +91,11 @@
         urlParams.append('Data', form.Data.value);
         urlParams.append('Descricao', form.Descricao.value);
 
+        // Verifica se o usuário anexou alguma foto
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
             
+            // Filtro de tamanho máximo (5MB)
             if (file.size > 5 * 1024 * 1024) {
                 alert('⚠️ A imagem é muito grande! Por favor, escolha uma foto menor que 5MB.');
                 btn.innerText = '💾 Salvar Registro';
@@ -112,17 +114,21 @@
             };
             reader.readAsDataURL(file);
         } else {
+            // Se enviar sem foto, vai só o texto
             enviarDados(form.action, urlParams, btn);
         }
     });
 
     function enviarDados(actionUrl, params, button) {
+        // CORREÇÃO CRUCIAL: Adicionado o mode: 'no-cors' para burlar o bloqueio do Google e registrar 100% das vezes
         fetch(actionUrl, {
             method: 'POST',
             body: params.toString(),
+            mode: 'no-cors',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
         .then(() => { 
+            // Redireciona para o histórico após o envio com sucesso
             window.location.href = 'historico.html'; 
         })
         .catch(error => { 

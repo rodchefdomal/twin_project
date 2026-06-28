@@ -94,13 +94,12 @@
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
             
-            // Função para comprimir a imagem antes de enviar!
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800; // Reduz a resolução para web
+                    const MAX_WIDTH = 800; 
                     const MAX_HEIGHT = 800;
                     let width = img.width;
                     let height = img.height;
@@ -122,7 +121,6 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Converte para JPEG com 70% de qualidade (fica super leve!)
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
                     const base64String = dataUrl.split(',')[1];
                     

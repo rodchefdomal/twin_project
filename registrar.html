@@ -42,7 +42,7 @@
 <div class="container">
     <h1>📝 Registrar Manutenção</h1>
     
-    <form id="formManutencao" action="https://script.google.com/macros/s/AKfycbz1wLNAJvCEsY9PdjXzDUqifP1KbmVxhnm1OqNYMYzMHa1QtFiPdp9Uk4gXFUMhBK3F/exec" method="POST">
+    <form id="formManutencao" action="https://script.google.com/macros/s/AKfycbyOa34vsNRk9tPiTJ-WliAv-0j-z62pFMrKgrmBNg5snovcHcnr3o5g2wRpX-XmmQ7F/exec" method="POST">
         
         <div class="form-group">
             <label for="nome">Nome do Colaborador:</label>
@@ -82,7 +82,7 @@
         const btn = document.getElementById('btnSubmit');
         const fileInput = document.getElementById('foto');
         
-        btn.innerText = 'Processando dados e imagem... ⏳';
+        btn.innerText = 'Processando dados... ⏳';
         btn.disabled = true;
         
         const urlParams = new URLSearchParams();
@@ -91,36 +91,57 @@
         urlParams.append('Data', form.Data.value);
         urlParams.append('Descricao', form.Descricao.value);
 
-        // Verifica se o usuário anexou alguma foto
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
             
-            // Filtro de tamanho máximo (5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('⚠️ A imagem é muito grande! Por favor, escolha uma foto menor que 5MB.');
-                btn.innerText = '💾 Salvar Registro';
-                btn.disabled = false;
-                return;
-            }
-
+            // Função para comprimir a imagem antes de enviar!
             const reader = new FileReader();
             reader.onload = function(event) {
-                const base64String = event.target.result.split(',')[1];
-                urlParams.append('FotoData', base64String);
-                urlParams.append('FotoNome', file.name);
-                urlParams.append('FotoMime', file.type);
-                
-                enviarDados(form.action, urlParams, btn);
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800; // Reduz a resolução para web
+                    const MAX_HEIGHT = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Converte para JPEG com 70% de qualidade (fica super leve!)
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    const base64String = dataUrl.split(',')[1];
+                    
+                    urlParams.append('FotoData', base64String);
+                    urlParams.append('FotoNome', file.name || "foto_manutencao.jpg");
+                    urlParams.append('FotoMime', 'image/jpeg');
+                    
+                    enviarDados(form.action, urlParams, btn);
+                };
+                img.src = event.target.result;
             };
             reader.readAsDataURL(file);
         } else {
-            // Se enviar sem foto, vai só o texto
             enviarDados(form.action, urlParams, btn);
         }
     });
 
     function enviarDados(actionUrl, params, button) {
-        // CORREÇÃO CRUCIAL: Adicionado o mode: 'no-cors' para burlar o bloqueio do Google e registrar 100% das vezes
+        button.innerText = 'Enviando para o sistema... 🚀';
         fetch(actionUrl, {
             method: 'POST',
             body: params.toString(),
@@ -128,7 +149,6 @@
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
         .then(() => { 
-            // Redireciona para o histórico após o envio com sucesso
             window.location.href = 'historico.html'; 
         })
         .catch(error => { 

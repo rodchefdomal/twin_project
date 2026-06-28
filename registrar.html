@@ -32,7 +32,7 @@
         textarea { resize: vertical; min-height: 100px; }
 
         .btn-salvar { width: 100%; padding: 14px; background-color: #006341; color: white; border: 1px solid #008f5d; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-salvar:hover { background-color: #008f5d; }
+        .btn-salvar:hover { background-color: #006341; }
         .btn-salvar:disabled { background-color: #2a4033; cursor: not-allowed; border-color: #1f3328; color: #9cb3a5; }
         .btn-voltar { display: block; text-align: center; margin-top: 25px; color: #008f5d; text-decoration: none; font-weight: bold; }
         .btn-voltar:hover { text-decoration: underline; color: #00b374; }
@@ -66,7 +66,7 @@
 
         <div class="form-group">
             <label for="foto">Anexar Foto da Manutenção (Opcional):</label>
-            <input type="file" id="foto" accept="image/png, image/jpeg, image/jpg">
+            <input type="file" id="foto" accept="image/*" capture="environment">
         </div>
 
         <button type="submit" id="btnSubmit" class="btn-salvar">💾 Salvar Registro</button>
@@ -91,11 +91,9 @@
         urlParams.append('Data', form.Data.value);
         urlParams.append('Descricao', form.Descricao.value);
 
-        // Verifica se tem foto anexada
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
             
-            // TRAVA DE SEGURANÇA: Limite de 5MB para não travar o script
             if (file.size > 5 * 1024 * 1024) {
                 alert('⚠️ A imagem é muito grande! Por favor, escolha uma foto menor que 5MB.');
                 btn.innerText = '💾 Salvar Registro';
@@ -105,7 +103,7 @@
 
             const reader = new FileReader();
             reader.onload = function(event) {
-                const base64String = event.target.result.split(',')[1]; // Pega só o código da imagem
+                const base64String = event.target.result.split(',')[1];
                 urlParams.append('FotoData', base64String);
                 urlParams.append('FotoNome', file.name);
                 urlParams.append('FotoMime', file.type);
@@ -114,7 +112,6 @@
             };
             reader.readAsDataURL(file);
         } else {
-            // Se não tiver foto, envia só os dados de texto
             enviarDados(form.action, urlParams, btn);
         }
     });
